@@ -18,9 +18,6 @@ const app = express();
 app.use
 (cors({origin: "http://localhost:5173", credentials: true}));
 
-// Middleware for parsing JSON request bodies
-app.use(express.json());
-
 // Middleware
 app.use(express.json()); // Parse incoming JSON request bodies
 app.use(cookieParser()); // Parse cookies attached to incoming requests
