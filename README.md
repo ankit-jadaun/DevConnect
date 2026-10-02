@@ -1,10 +1,10 @@
 # DevConnect 🚀
 
-**DevConnect** is a full-stack developer networking platform built with the **MERN stack**. It allows developers to create profiles, discover other developers, send connection requests, manage connections, and build their professional network.
+DevConnect is a full-stack developer networking platform built with the MERN stack. It allows developers to create profiles, discover other developers, send connection requests, manage connections, and build their professional network.
 
 ## ✨ Features
 
-* 🔐 JWT-based user authentication
+* 🔐 User authentication with JWT and cookies
 * 👤 Developer profile management
 * 🖼️ Profile photo support
 * 💻 Skills and developer information
@@ -13,9 +13,9 @@
 * 🚫 Ignore users
 * 👥 Manage connections
 * 🔎 Personalized developer feed
-* 🍪 Cookie-based authentication
-* 📱 Responsive user interface
-* 🎨 Modern React UI
+* 💾 Persistent authentication
+* 📱 Responsive UI
+* 🎨 Modern React-based interface
 
 ## 🛠️ Tech Stack
 
@@ -40,7 +40,7 @@
 * CORS
 * dotenv
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
 DevConnect/
@@ -54,28 +54,33 @@ DevConnect/
 │   ├── package.json
 │   └── ...
 │
-└── .gitignore
+├── .gitignore
+└── README.md
 ```
 
-## 🚀 Getting Started
+## ⚙️ Getting Started
 
-Follow these steps to run the project locally.
+Follow these steps to run DevConnect locally.
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ankit-jadaun/DevConnect.git
 cd DevConnect
 ```
 
-### 2. Backend Setup
+### 2. Install backend dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file inside the `backend` folder:
+### 3. Configure backend environment variables
+
+Create a `.env` file inside the `backend` folder.
+
+Example:
 
 ```env
 PORT=7777
@@ -83,59 +88,64 @@ MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
 
-Then start the backend:
+Do not share your actual `.env` file or secret keys publicly.
+
+### 4. Start the backend
 
 ```bash
 npm run dev
 ```
 
-### 3. Frontend Setup
+The backend will start on your configured port.
+
+### 5. Install frontend dependencies
 
 Open another terminal:
 
 ```bash
 cd frontend
 npm install
+```
+
+### 6. Start the frontend
+
+```bash
 npm run dev
 ```
 
-The frontend will usually be available at:
+Vite will provide a local development URL, usually:
 
 ```text
 http://localhost:5173
 ```
 
-## 🔐 Authentication
+## 🔑 Authentication
 
-DevConnect uses **JWT-based authentication** with HTTP cookies.
+DevConnect uses JWT-based authentication.
 
-The authentication flow includes:
+After successful login:
 
-1. User logs in with their credentials.
-2. The backend validates the credentials.
-3. A JWT is generated.
-4. The JWT is stored in a cookie.
-5. Protected routes verify the authenticated user.
-6. The frontend sends authenticated API requests using credentials.
+* The server generates a JWT.
+* The JWT is stored using an HTTP cookie.
+* Protected routes verify the authenticated user.
+* The frontend sends requests with credentials enabled.
 
 ## 🤝 Connection System
 
 Users can:
 
 1. Discover developers through the feed.
-2. Send connection requests.
-3. Ignore developers.
+2. Send an interested request.
+3. Ignore a developer.
 4. Receive connection requests.
 5. Accept or reject requests.
-6. View their connections.
+6. View accepted connections.
 
-Users who already have a connection or pending request are excluded from the feed.
+## 🔒 Security
 
-## 🔒 Environment Variables
+Sensitive configuration values are stored in environment variables.
 
-Sensitive information is stored using environment variables.
-
-Never commit:
+The following files should never be committed:
 
 ```text
 .env
@@ -143,18 +153,16 @@ Never commit:
 node_modules/
 ```
 
-Make sure your actual database credentials and JWT secrets are never exposed publicly.
+## 🚧 Future Improvements
 
-## 🧩 Future Improvements
-
-* 💬 Real-time developer messaging
-* 🔔 Notifications
-* 🔎 Developer search and filters
-* 🎯 Improved developer recommendations
-* 👤 Profile verification
-* 🖼️ Image optimization
-* ☁️ AWS deployment
-* 🔄 CI/CD pipeline
+* Real-time messaging
+* Developer search and filters
+* Notifications
+* Profile verification
+* Better recommendation algorithm
+* Image optimization
+* Deployment with AWS
+* CI/CD pipeline
 
 ## 👨‍💻 Author
 
@@ -162,7 +170,8 @@ Make sure your actual database credentials and JWT secrets are never exposed pub
 
 Full Stack Developer | MERN
 
-[GitHub](https://github.com/ankit-jadaun)
+GitHub:
+https://github.com/ankit-jadaun
 
 ## ⭐ Support
 
