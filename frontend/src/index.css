@@ -1,0 +1,153 @@
+/* Font (sabse upar hi rehna chahiye) */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* ---------- DevConnect theme ----------
+   Poore app ka ek hi theme. Isliye har page, navbar aur footer ka color match karega.
+   JSX mein ye use karo: bg-base-100, bg-base-200, text-primary, btn-primary etc.
+   bg-gray-100 ya bg-blue-600 jaise fixed colors ab use nahi karne. */
+@plugin "daisyui/theme" {
+  name: "devconnect";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  /* 100 = page background, 200 = card/navbar/footer, 300 = border */
+  --color-base-100: oklch(19% 0.03 270);
+  --color-base-200: oklch(23% 0.03 270);
+  --color-base-300: oklch(30% 0.03 270);
+  --color-base-content: oklch(94% 0.01 270);
+
+  /* Main brand color (coral) */
+  --color-primary: oklch(68% 0.22 18);
+  --color-primary-content: oklch(98% 0.01 18);
+
+  /* Violet: chhote highlights ke liye */
+  --color-secondary: oklch(62% 0.2 285);
+  --color-secondary-content: oklch(98% 0.01 285);
+
+  /* Teal: connected / success feel */
+  --color-accent: oklch(80% 0.14 180);
+  --color-accent-content: oklch(20% 0.04 180);
+
+  --color-neutral: oklch(32% 0.03 270);
+  --color-neutral-content: oklch(92% 0.01 270);
+
+  --color-info: oklch(72% 0.14 240);
+  --color-info-content: oklch(18% 0.03 240);
+  --color-success: oklch(76% 0.17 155);
+  --color-success-content: oklch(18% 0.04 155);
+  --color-warning: oklch(82% 0.15 80);
+  --color-warning-content: oklch(22% 0.04 80);
+  --color-error: oklch(66% 0.21 25);
+  --color-error-content: oklch(98% 0.01 25);
+
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* ---------- Light theme ----------
+   Dark theme ke saath hi ek light theme. Navbar ka toggle button inke beech switch karta hai.
+   Naya theme chahiye to is block ko copy karke name aur colors badal do. */
+@plugin "daisyui/theme" {
+  name: "devconnect-light";
+  default: false;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* Light mein page halka grey, cards safed (isliye 200 = white) */
+  --color-base-100: oklch(96% 0.01 270);
+  --color-base-200: oklch(100% 0 0);
+  --color-base-300: oklch(88% 0.015 270);
+  --color-base-content: oklch(25% 0.03 270);
+
+  --color-primary: oklch(63% 0.23 18);
+  --color-primary-content: oklch(98% 0.01 18);
+
+  --color-secondary: oklch(55% 0.21 285);
+  --color-secondary-content: oklch(98% 0.01 285);
+
+  --color-accent: oklch(70% 0.14 180);
+  --color-accent-content: oklch(20% 0.04 180);
+
+  --color-neutral: oklch(30% 0.03 270);
+  --color-neutral-content: oklch(96% 0.01 270);
+
+  --color-info: oklch(60% 0.15 240);
+  --color-info-content: oklch(98% 0.01 240);
+  --color-success: oklch(58% 0.16 155);
+  --color-success-content: oklch(98% 0.01 155);
+  --color-warning: oklch(78% 0.16 80);
+  --color-warning-content: oklch(22% 0.04 80);
+  --color-error: oklch(60% 0.22 25);
+  --color-error-content: oklch(98% 0.01 25);
+
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* ---------- Global base styles ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ---------- Chhote helper classes ---------- */
+
+/* Coral to violet gradient: logo, avatar fallback */
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+/* Same gradient, text par */
+.brand-gradient-text {
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Page ke peeche halki glow (Body mein <main> par lagi hai) */
+.page-glow {
+  background-image:
+    radial-gradient(40rem 30rem at 10% -10%, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent),
+    radial-gradient(35rem 28rem at 100% 10%, color-mix(in oklab, var(--color-secondary) 12%, transparent), transparent);
+}
+
+/* Feed mein naya card aate waqt halka animation */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card-enter {
+  animation: card-in 0.35s ease-out;
+}
