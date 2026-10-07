@@ -21,8 +21,6 @@ const connectionRequestSchema = new mongoose.Schema({
           values: ["interested", "ignored", "accepted", "rejected"], // enum = fixed/allowed options.
           message: `{VALUE} is not supported`
         }
-
-
     },
 
     // Premium user ne Super Like kiya ho to true.
@@ -31,7 +29,7 @@ const connectionRequestSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }
-     
+
 },{ timestamps: true});
 
 // if i will ever do connectionRequest.findOne({fromUserId: "123", toUserId: "456"}) then it will be faster because of this index.

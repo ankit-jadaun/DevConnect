@@ -18,8 +18,6 @@ const validatorSignUpData = (req) => {
 
 
 
-
-
 const validatorEditProfileData = (req) => {
   const allowedEditFields = [
     // User ne jo fields bheji hain unhe allowed fields ke saath check karta hai
