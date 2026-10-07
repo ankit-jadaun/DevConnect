@@ -19,7 +19,10 @@ const getTokenFromCookie = (cookieHeader = "") => {
 
 const initializeSocket = (server) => {
   io = new Server(server, {
-    cors: { origin: "http://localhost:5173", credentials: true },
+    cors: {
+      origin: ["http://localhost:5173", "https://devconnect-app.duckdns.org"],
+      credentials: true,
+    },
   });
 
   // Har socket connection par check karo ki user logged-in hai (wahi JWT cookie jo auth middleware use karta hai)
@@ -53,21 +56,33 @@ const initializeSocket = (server) => {
     socket.on("sendMessage", async ({ friendId, text }) => {
       try {
         // 1) Basic validation
-        if (!mongoose.Types.ObjectId.isValid(friendId) || typeof text !== "string" || !text.trim()) {
+        if (
+          !mongoose.Types.ObjectId.isValid(friendId) ||
+          typeof text !== "string" ||
+          !text.trim()
+        ) {
           return socket.emit("chatError", "Invalid message");
         }
 
         if (text.trim().length > 1000) {
-          return socket.emit("chatError", "Message is too long (max 1000 characters)");
+          return socket.emit(
+            "chatError",
+            "Message is too long (max 1000 characters)",
+          );
         }
 
         // 2) Sender ka naam (notification mein dikhane ke liye)
-        const sender = await User.findById(socket.userId).select("firstName lastName");
+        const sender = await User.findById(socket.userId).select(
+          "firstName lastName",
+        );
 
         // 3) Sirf connections ke beech chat (premium ki zaroorat nahi)
         const connected = await areConnected(socket.userId, friendId);
         if (!connected) {
-          return socket.emit("chatError", "You can only chat with your connections");
+          return socket.emit(
+            "chatError",
+            "You can only chat with your connections",
+          );
         }
 
         // 4) Message save karo
@@ -88,7 +103,9 @@ const initializeSocket = (server) => {
         };
 
         // 5) Dono ko bhejo (sender ko bhi, taaki uska apna message bhi usi tarah dikhe)
-        io.to(`user:${socket.userId}`).to(`user:${friendId}`).emit("messageReceived", payload);
+        io.to(`user:${socket.userId}`)
+          .to(`user:${friendId}`)
+          .emit("messageReceived", payload);
       } catch (error) {
         console.log("sendMessage error:", error);
         socket.emit("chatError", "Could not send the message");

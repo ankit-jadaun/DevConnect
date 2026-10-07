@@ -1,6 +1,5 @@
 // npm i socket.io-client
 import { io } from "socket.io-client";
-import { BASE_URL } from "./constants";
 
 let socket = null;
 
@@ -8,7 +7,10 @@ let socket = null;
 // withCredentials se login wali cookie saath jaati hai.
 export const getSocket = () => {
   if (!socket) {
-    socket = io(BASE_URL, { withCredentials: true });
+    socket = io(window.location.origin, {
+      path: "/api/socket.io",
+      withCredentials: true,
+    });
   }
   return socket;
 };
