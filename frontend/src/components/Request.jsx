@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { addRequests, removeRequest } from "../utils/requestsSlice";
+import VerifiedBadge from "./VerifiedBadge";
 
 const Requests = () => {
   const requests = useSelector((store) => store.request);
@@ -109,10 +110,14 @@ const Requests = () => {
         ) : (
           /* Requests List */
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {requests.map((request) => (
+            {[...requests]
+              .sort((a, b) => Number(b.isSuperLike) - Number(a.isSuperLike)) // Super Like sabse upar
+              .map((request) => (
               <div
                 key={request._id}
-                className="group card overflow-hidden border border-base-300 bg-base-200 transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
+                className={`group card overflow-hidden border bg-base-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                  request.isSuperLike ? "border-info" : "border-base-300 hover:border-primary/40"
+                }`}
               >
                 {/* Profile Image */}
                 <figure className="relative h-64">
@@ -131,16 +136,23 @@ const Requests = () => {
                   {/* Image Overlay */}
                   <div className="absolute inset-0 bg-linear-to-t from-base-200 via-transparent to-transparent" />
 
-                  {/* Request Badge */}
-                  <span className="badge badge-primary badge-soft absolute right-4 top-4 backdrop-blur">
-                    ● Request
-                  </span>
+                  {/* Request Badge (Super Like ho to alag badge dikhta hai) */}
+                  {request.isSuperLike ? (
+                    <span className="badge badge-info absolute right-4 top-4">
+                      ★ Super Like
+                    </span>
+                  ) : (
+                    <span className="badge badge-primary badge-soft absolute right-4 top-4 backdrop-blur">
+                      ● Request
+                    </span>
+                  )}
 
                   {/* Name on Image */}
                   <div className="absolute bottom-4 left-5 right-5">
-                    <h2 className="text-2xl font-extrabold">
+                    <h2 className="flex items-center gap-1.5 text-2xl font-extrabold">
                       {request.fromUserId?.firstName || "Unknown"}{" "}
                       {request.fromUserId?.lastName || ""}
+                      {request.fromUserId?.isPremium && <VerifiedBadge />}
                     </h2>
 
                     <p className="mt-1 text-sm capitalize text-base-content/70">

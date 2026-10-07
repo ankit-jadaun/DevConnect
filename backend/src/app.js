@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const http = require("http");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -10,9 +11,16 @@ const authRouter = require("./routes/authRouter");
 const profileRouter = require("./routes/profileRouter");
 const requestRouter = require("./routes/requestRouter");
 const userRouter = require("./routes/userRouter");
+const paymentRouter = require("./routes/paymentRouter");
+const chatRouter = require("./routes/chatRouter");
+const { initializeSocket } = require("./utils/socket");
 
 
 const app = express();
+
+// Socket.io isi http server par chalega
+const server = http.createServer(app);
+initializeSocket(server);
 
 // CORS
 app.use
@@ -28,6 +36,8 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
+app.use("/", chatRouter);
 
 
 // Start server after database connection
@@ -35,7 +45,7 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("Server is running on port 3000");
     });
 

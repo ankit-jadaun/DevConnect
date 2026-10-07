@@ -1,4 +1,5 @@
 import Logo from "./Logo";
+import VerifiedBadge from "./VerifiedBadge";
 import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -12,6 +13,7 @@ const navLinks = [
   { to: "/", label: "Feed" },
   { to: "/connections", label: "Connections" },
   { to: "/requests", label: "Requests" },
+  { to: "/premium", label: "Premium" },
 ];
 
 // Theme ke naam (index.css mein jo name rakhe hain wahi)
@@ -33,6 +35,18 @@ const MoonIcon = () => (
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
+
+  // Pending requests ka count (Super Like ho to badge blue + star ke saath)
+  const requests = useSelector((store) => store.request);
+  const requestCount = requests?.length || 0;
+  const superLikeCount = requests?.filter((request) => request.isSuperLike).length || 0;
+
+  const requestBadge = requestCount > 0 && (
+    <span className={`badge badge-sm ${superLikeCount > 0 ? "badge-info" : "badge-primary"}`}>
+      {superLikeCount > 0 && "★ "}
+      {requestCount}
+    </span>
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -91,6 +105,7 @@ const Navbar = () => {
                     className={({ isActive }) => (isActive ? "menu-active" : "")}
                   >
                     {link.label}
+                    {link.to === "/requests" && requestBadge}
                   </NavLink>
                 </li>
               ))}
@@ -114,9 +129,13 @@ const Navbar = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle avatar"
+                className="btn btn-ghost btn-circle avatar indicator"
                 aria-label="Open profile menu"
               >
+                {/* Mobile par Requests link dropdown ke andar hai, isliye avatar par chhota dot */}
+                {requestCount > 0 && (
+                  <span className="indicator-item badge badge-primary badge-xs" />
+                )}
                 <div className="w-10 rounded-full ring-2 ring-primary ring-offset-2 ring-offset-base-200">
                   {user.photoUrl ? (
                     <img src={user.photoUrl} alt="DevConnect Profile" />
@@ -134,13 +153,19 @@ const Navbar = () => {
                 className="menu dropdown-content z-50 mt-3 w-56 rounded-box border border-base-300 bg-base-200 p-2 shadow-lg"
               >
                 <li className="menu-title">
-                  {user.firstName} {user.lastName}
+                  <span className="flex items-center gap-1.5">
+                    {user.firstName} {user.lastName}
+                    {user.isPremium && <VerifiedBadge className="h-4 w-4" />}
+                  </span>
                 </li>
 
                 {/* Ye 3 links sirf mobile par dikhte hain */}
                 {navLinks.map((link) => (
                   <li key={link.to} className="md:hidden">
-                    <Link to={link.to}>{link.label}</Link>
+                    <Link to={link.to}>
+                      {link.label}
+                      {link.to === "/requests" && requestBadge}
+                    </Link>
                   </li>
                 ))}
 

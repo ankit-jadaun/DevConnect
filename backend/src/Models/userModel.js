@@ -72,11 +72,34 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
     },
+
+    // ---------- Premium ----------
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+
+    premiumPlan: {
+      type: String, // "monthly" ya "yearly"
+    },
+
+    premiumExpiry: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Password hash ko API response (login, profile view etc.) mein kabhi nahi bhejna.
+// Pehle login aur /profile/view ke response mein password hash bhi ja raha tha.
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
+});
 
 const User = mongoose.model("User", userSchema);
 

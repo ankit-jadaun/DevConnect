@@ -8,10 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { addConnections } from "../utils/connectionSlice";
 
+import { useNavigate } from "react-router-dom";
+
+import VerifiedBadge from "./VerifiedBadge";
+
 const Connections = () => {
   const connections = useSelector((store) => store.connection);
 
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   // Loading skeleton dikhane ke liye
   const [loading, setLoading] = useState(true);
@@ -112,9 +118,10 @@ const Connections = () => {
 
                   {/* Name on Image */}
                   <div className="absolute bottom-4 left-5 right-5">
-                    <h2 className="text-2xl font-extrabold">
+                    <h2 className="flex items-center gap-1.5 text-2xl font-extrabold">
                       {connection.firstName || "Unknown"}{" "}
                       {connection.lastName || ""}
+                      {connection.isPremium && <VerifiedBadge />}
                     </h2>
 
                     <p className="mt-1 text-sm capitalize text-base-content/70">
@@ -154,9 +161,12 @@ const Connections = () => {
                     )}
                   </div>
 
-                  {/* View Profile Button */}
-                  <button className="btn btn-primary btn-block mt-auto">
-                    View Profile
+                  {/* Message Button: chat page kholta hai */}
+                  <button
+                    onClick={() => navigate(`/chat/${connection._id}`)}
+                    className="btn btn-primary btn-block mt-auto"
+                  >
+                    💬 Message
                   </button>
                 </div>
               </div>

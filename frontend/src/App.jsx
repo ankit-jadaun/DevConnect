@@ -9,6 +9,8 @@ import reduxStore from "./utils/reduxStore.js";
 import Feed from "./components/Feed.jsx";
 import Connections from "./components/Connections.jsx";
 import Requests from "./components/Request.jsx";
+import Premium from "./components/Premium.jsx";
+import Chat from "./components/Chat.jsx";
 
 const App = () => {
   return (
@@ -23,6 +25,9 @@ const App = () => {
                <Route path="/profile" element={<Profile />} />
                <Route path="/connections" element={<Connections />} />
                <Route path="/requests" element={<Requests />} />
+               <Route path="/premium" element={<Premium />} />
+               <Route path="/chat/:friendId" element={<Chat />} />
+
             </Route>
         </Routes>
       </BrowserRouter>

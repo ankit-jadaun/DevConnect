@@ -97,6 +97,7 @@ const EditProfile = () => {
     age,
     gender,
     photoUrl,
+    isPremium: user?.isPremium, // premium user ko preview mein bhi blue tick dikhe
   };
 
   return (
@@ -206,7 +207,7 @@ const EditProfile = () => {
                     <option value="">Select gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="others">Other</option>
                   </select>
                 </div>
               </div>

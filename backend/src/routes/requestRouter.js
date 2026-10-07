@@ -4,6 +4,10 @@ const requestRouter = express.Router();
 const userAuth = require("../middlewares/auth");
 const { ConnectionRequest } = require("../Models/connectionRequest");
 const { User } = require("../Models/userModel");
+const { sendToUser } = require("../utils/socket");
+
+// Ek premium user din mein kitne Super Like kar sakta hai
+const SUPER_LIKE_DAILY_LIMIT = 5;
 
 //<-------------Send Connection Request API---------------->
 requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res) => {
@@ -12,8 +16,8 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
     const toUserId = req.params.toUserId;
     const status = req.params.status;
 
-    // Check if status is valid
-    if (status !== "interested" && status !== "ignored") {
+    // Check if status is valid ("superliked" naya hai)
+    if (status !== "interested" && status !== "ignored" && status !== "superliked") {
       return res.status(400).json({ error: "Invalid status type: " + status });
     }
 
@@ -33,6 +37,29 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
       return res.status(404).json({ error: "User not found." });
     }
 
+    // Super Like sirf premium users ke liye hai
+    const isSuperLike = status === "superliked";
+
+    if (isSuperLike) {
+      if (!req.user.isPremium) {
+        return res.status(403).json({ error: "Super Like is a Premium feature. Upgrade to use it." });
+      }
+
+      // Aaj ke Super Likes gino (raat 12 baje se)
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const usedToday = await ConnectionRequest.countDocuments({
+        fromUserId,
+        isSuperLike: true,
+        createdAt: { $gte: startOfToday },
+      });
+
+      if (usedToday >= SUPER_LIKE_DAILY_LIMIT) {
+        return res.status(429).json({ error: `You have used all ${SUPER_LIKE_DAILY_LIMIT} Super Likes for today. Try again tomorrow.` });
+      }
+    }
+
     // Check if request already exists means if the current user has already sent a connection request to the target user. If such a request exists, it means that the current user cannot send another request to that user, as they have already initiated a connection request. This check prevents duplicate requests and ensures that users cannot send multiple requests to the same user.
     const existingRequest = await ConnectionRequest.findOne({ fromUserId, toUserId });
     if (existingRequest) {
@@ -45,13 +72,37 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
       return res.status(400).json({ error: "The user has already sent you a connection request. You cannot send a request to them." });
     }
 
-    // Create a new request
-    const connectionRequest = new ConnectionRequest({ fromUserId, toUserId, status });
+    // Create a new request (Super Like bhi "interested" status ke saath save hota hai)
+    const connectionRequest = new ConnectionRequest({
+      fromUserId,
+      toUserId,
+      status: isSuperLike ? "interested" : status,
+      isSuperLike,
+    });
 
     // Save request to database
     const savedRequest = await connectionRequest.save();
 
-    res.status(200).json({ message: `${req.user.firstName} is interested in ${toUser.firstName}`, savedRequest });
+    // Super Like hai to receiver ko turant live notification bhejo
+    if (isSuperLike) {
+      sendToUser(toUserId, "superLikeReceived", {
+        requestId: savedRequest._id,
+        from: {
+          _id: req.user._id,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          photoUrl: req.user.photoUrl,
+          isPremium: req.user.isPremium,
+        },
+      });
+    }
+
+    res.status(200).json({
+      message: isSuperLike
+        ? `${req.user.firstName} super liked ${toUser.firstName}`
+        : `${req.user.firstName} is interested in ${toUser.firstName}`,
+      savedRequest,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

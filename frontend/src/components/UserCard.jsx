@@ -1,10 +1,16 @@
 import React, { useRef, useState } from "react";
 
+import { useSelector } from "react-redux";
+
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 
 import { BASE_URL } from "../utils/constants";
 
 import { toast } from "sonner";
+
+import VerifiedBadge from "./VerifiedBadge";
 
 // preview = true  ->  sirf dikhane ke liye (EditProfile ke live preview mein), swipe aur buttons band
 const UserCard = ({ user, onAction, preview = false }) => {
@@ -16,10 +22,15 @@ const UserCard = ({ user, onAction, preview = false }) => {
     gender,
     about,
     skills,
+    isPremium,
     _id,
   } = user;
 
   const cardRef = useRef(null);
+
+  // Logged-in user (Super Like ke liye premium check)
+  const me = useSelector((store) => store.user);
+  const navigate = useNavigate();
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -41,6 +52,8 @@ const UserCard = ({ user, onAction, preview = false }) => {
       toast.success(
         status === "interested"
           ? "Connection request sent successfully"
+          : status === "superliked"
+          ? "Super Like sent!"
           : "User ignored successfully"
       );
 
@@ -57,6 +70,19 @@ const UserCard = ({ user, onAction, preview = false }) => {
       // Reset card if API fails
       setPosition({ x: 0, y: 0 });
     }
+  };
+
+  // Super Like: premium nahi hai to Premium page par bhej do
+  const handleSuperLike = () => {
+    if (!me?.isPremium) {
+      toast("Super Like is a Premium feature", {
+        description: "Upgrade to Premium to stand out.",
+      });
+      navigate("/premium");
+      return;
+    }
+
+    sendRequest("superliked");
   };
 
   // Start dragging
@@ -173,8 +199,9 @@ const UserCard = ({ user, onAction, preview = false }) => {
 
           {/* Name + age/gender */}
           <div className="absolute bottom-3 left-5 right-5">
-            <h2 className="text-2xl font-extrabold">
+            <h2 className="flex items-center gap-1.5 text-2xl font-extrabold">
               {firstName || "Unknown"} {lastName || ""}
+              {isPremium && <VerifiedBadge />}
             </h2>
 
             <p className="text-sm capitalize text-base-content/70">
@@ -208,19 +235,27 @@ const UserCard = ({ user, onAction, preview = false }) => {
 
           {/* Buttons */}
           {!preview && (
-            <div className="card-actions mt-2 gap-3">
+            <div className="card-actions mt-2 flex-nowrap gap-2">
               <button
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => sendRequest("ignored")}
-                className="btn btn-outline flex-1"
+                className="btn btn-outline flex-1 px-2"
               >
                 Ignore
               </button>
 
               <button
                 onPointerDown={(e) => e.stopPropagation()}
+                onClick={handleSuperLike}
+                className="btn btn-info flex-1 px-2"
+              >
+                {me?.isPremium ? "★ Super Like" : "🔒 Super Like"}
+              </button>
+
+              <button
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => sendRequest("interested")}
-                className="btn btn-primary flex-1"
+                className="btn btn-primary flex-1 px-2"
               >
                 Interested
               </button>

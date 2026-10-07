@@ -37,7 +37,7 @@ const Footer = () => {
 
             {/* TODO: yahan apna GitHub repo ka link daal dena */}
             <a
-              href="https://github.com/ankit-jadaun"
+              href="https://github.com"
               target="_blank"
               rel="noreferrer"
               className={linkClass}

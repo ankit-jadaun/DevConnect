@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const connectionRequestSchema = new mongoose.Schema({
@@ -24,6 +23,13 @@ const connectionRequestSchema = new mongoose.Schema({
         }
 
 
+    },
+
+    // Premium user ne Super Like kiya ho to true.
+    // Status phir bhi "interested" hi rehta hai, isliye review/accept ka purana flow waise hi chalta hai.
+    isSuperLike: {
+        type: Boolean,
+        default: false
     }
      
 },{ timestamps: true});

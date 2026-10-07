@@ -4,6 +4,9 @@ const userAuth = require("../middlewares/auth");
 const { ConnectionRequest } = require("../Models/connectionRequest");
 const { User } = require("../Models/userModel");
 
+// Dusre users ke liye jo fields bhejni hain (isPremium se blue tick dikhta hai)
+const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills isPremium";
+
 
 
 // GET all the pending requests received by a logged-In User
@@ -16,7 +19,7 @@ userRouter.get("/user/requests/recieved", userAuth , async (req,res) => {
             status: "interested",
          }).populate(
             "fromUserId",
-            "firstName lastName photoUrl age gender about skills"
+            USER_SAFE_DATA
          );
 
          return res.status(200).json({ message: "Connection Request fetched successfully", connectionRequest});
@@ -40,9 +43,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
             ],
             status: "accepted"
         }).populate(
-            "fromUserId", "firstName lastName photoUrl age gender about skills"
+            "fromUserId", USER_SAFE_DATA
         ).populate(
-            "toUserId", "firstName lastName photoUrl age gender about skills"
+            "toUserId", USER_SAFE_DATA
         );
 
         const connectionList = connections.map((connection) => {
@@ -100,7 +103,8 @@ userRouter.get("/feed", userAuth, async (req, res) => {
                 $nin: [...hideUsersFromFeed, loggedInUser._id]
             }
         })
-        .select("firstName lastName photoUrl age gender about skills")
+        .select(USER_SAFE_DATA)
+        .sort({ isPremium: -1, createdAt: -1 }) // Premium users sabse pehle (priority in feed), phir naye users
         .skip(skip)
         .limit(limit);
 

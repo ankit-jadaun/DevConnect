@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants.js";
+import { LogoMark } from "./Logo";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -83,9 +84,7 @@ const Signup = () => {
       <div className="w-full max-w-md">
         {/* Heading */}
         <div className="mb-8 text-center">
-          <div className="brand-gradient mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-extrabold text-white shadow-lg">
-            D
-          </div>
+          <LogoMark className="mx-auto mb-4 h-14 w-14" />
 
           <h1 className="text-3xl font-extrabold tracking-tight">Create account</h1>
 

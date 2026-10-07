@@ -18,6 +18,18 @@ const userAuth = async (req, res, next) => {
       req.userId = decoded._id;
 
       const user = await User.findById(req.userId);
+
+      // User delete ho chuka ho to aage mat jaane do
+      if (!user) {
+        return res.status(401).json({ message : "User not found. Please login again"});
+      }
+
+      // Premium ki date nikal gayi ho to premium band kar do
+      if (user.isPremium && user.premiumExpiry && user.premiumExpiry < new Date()) {
+        await User.updateOne({ _id: user._id }, { isPremium: false });
+        user.isPremium = false;
+      }
+
       req.user = user;
 
       next();
